@@ -1,0 +1,49 @@
+name: Build Vortex-X APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Prepare Project Directory
+        run: |
+          if [ -d "VortexX" ]; then
+            cp -r VortexX/* . || true
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Compile Rust Core (If Cargo exists)
+        run: |
+          rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+          cargo install cargo-ndk
+          CARGO_FILE=$(find . -name "Cargo.toml" | head -n 1)
+          if [ -n "$CARGO_FILE" ]; then
+            CARGO_DIR=$(dirname "$CARGO_FILE")
+            echo "Building Rust in $CARGO_DIR"
+            cd "$CARGO_DIR"
+            cargo ndk -t arm64-v8a -t armeabi-v7a -o ../app/src/main/jniLibs build --release || true
+          fi
+
+      - name: Setup Gradle 8.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Build Debug APK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vortex-X-Pro-APK
+          path: "**/*.apk"
