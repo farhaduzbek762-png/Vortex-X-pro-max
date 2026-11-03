@@ -1,0 +1,16 @@
+[package]
+name = "vortex_engine"
+version = "1.0.0"
+edition = "2021"
+description = "VORTEX-X Nanosecond Network Booster Core (DSCP EF / Keepalive / Scanner / Cloak)"
+
+[lib]
+name = "vortex_engine"
+crate-type = ["staticlib"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

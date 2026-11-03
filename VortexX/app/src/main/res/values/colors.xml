@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vortex_bg">#FF07080D</color>
+    <color name="vortex_cyan">#FF00F2FE</color>
+    <color name="vortex_red">#FFFF0844</color>
+    <color name="ic_launcher_background">#FF07080D</color>
+</resources>
