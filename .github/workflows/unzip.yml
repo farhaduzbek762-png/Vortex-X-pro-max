@@ -1,0 +1,18 @@
+name: Extract Zip
+on: [push, workflow_dispatch]
+permissions:
+  contents: write
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip File
+        run: |
+          unzip -o "*.zip"
+          rm -f *.zip
+          git config user.name "bot"
+          git config user.email "bot@bot.com"
+          git add .
+          git commit -m "Unzipped"
+          git push
